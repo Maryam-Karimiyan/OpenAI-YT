@@ -12,4 +12,9 @@ const {generateMeta,generateImage}=require("./controller/openAIController")
 
 const app=express()
 
-app.listen
+app.listen(4000,()=>console.log('app is running on port 400'))
+//middleware
+app.use(express.json())
+//routes
+app.post("/openai/meta",generateMeta)
+app.post("/openai/image",generateImage)

@@ -1,8 +1,9 @@
 const openai=require("../config/openAIConfig")
 
-const generateMeta=async(title)=>{
-const description=await openai.chat.completions.create({
-    model:"gpt-4o-mini"
+const generateMeta=async(req,res)=>{
+    const {title}=req.body
+    const description=await openai.chat.completions.create({
+    model:"gpt-3.5-turbo"
     ,
     messages:[
         {
@@ -13,7 +14,7 @@ const description=await openai.chat.completions.create({
 })
 
 const tags=await openai.chat.completions.create({
-    model:"gpt-4o-mini"
+    model:"gpt-3.5-turbo"
     ,
     messages:[
         {
@@ -21,11 +22,27 @@ const tags=await openai.chat.completions.create({
             content:`Come up with 10 keywords for youtube video ${title}`
         }
     ],
+    max_tokens:20,
 })
-console.log(tags.data.choices[0].message);
+res.status(200).json({
+    description:description.data.choices[0].message,
+    tags:tags.data.choices[0].message,
+})
 
 }
+const generateImage=async(req,res)=>{
 
+    const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: req.body.prompt,
+        n: 1,
+        size: "1024x1024",
+      });
+      image_url = response.data[0].url;
+      res.json({url:image_url})
+      
+}
 module.exports={
-    generateMeta
+    generateMeta,
+    generateImage
 }
